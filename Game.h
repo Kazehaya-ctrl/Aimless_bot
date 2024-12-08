@@ -1,5 +1,7 @@
 #pragma once
+#include<iostream>
 #include<ctime>
+#include<vector>
 #include<SFML/Audio.hpp>
 #include<SFML/Graphics.hpp>
 #include<SFML/Network.hpp>
@@ -13,19 +15,26 @@ private:
   sf::Event event;
   sf::VideoMode videoMode;
   sf::RectangleShape enemy;
-  float enemy_position_x;
+  std::vector<sf::RectangleShape> enemies;
+  sf::Vector2i mouse_position;
+
+  float enemy_timer;
+  float enemy_timer_max;
 
   void initVariable();
   void initWindow();
-  void initEnemy();
+  void initEnemies();
+
 public:
   Game();
   virtual ~Game();
 
+  void spawn_enemies();
+  void update_mouse_position();
   bool is_running();
   void event_polling();
-  void enemy_update();
-  void render_enemy();
+  void enemies_update();
+  void render_enemies();
   void game_update();
   void game_render();
 };
