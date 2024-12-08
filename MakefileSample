@@ -1,0 +1,13 @@
+@REM SETUP FOR YOUR VSCODE AFTER YOU DONE SETTING UP CPP_PROPERTIES.JSON
+
+all: compile link
+
+compile: 
+	g++ -c main.cpp -I"your_address_to_include_folder_for_sfml_library_you_downloaded" -DSFML_STATIC
+	g++ -c Game.cpp -I"your_address_to_include_folder_for_sfml_library_you_downloaded" -DSFML_STATIC
+
+link:
+	g++ main.o Game.o -o main -L"your_address_to_lib_folder_for_sfml_library_you_downloaded" -lsfml-graphics -lsfml-window -lsfml-system -lsfml-graphics -lsfml-window -lsfml-system
+
+clear:
+	rm -f main *.o
