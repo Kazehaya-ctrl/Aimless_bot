@@ -12,7 +12,7 @@ void Game::initVariable() {
 void Game::initWindow() {
   this->videoMode.width = 800;
   this->videoMode.height = 800;
-  this->window = new sf::RenderWindow(this->videoMode, "Aimless-bot");
+  this->window = new sf::RenderWindow(this->videoMode, "Aimless-lab");
   this->window->setFramerateLimit(60);
   this->deskTop = sf::VideoMode::getDesktopMode();
 }
