@@ -4,30 +4,39 @@ void Game::initVariable() {
   this->window = nullptr;
   this->enemy_timer = 100.f;
   this->enemy_timer_max = 100.f;
+  this->pause = false;
 }
 
 void Game::initWindow() {
   this->videoMode.width = 800;
   this->videoMode.height = 800;
   this->window = new sf::RenderWindow(this->videoMode, "Aimless-bot");
-
   this->window->setFramerateLimit(60);
+  this->deskTop = sf::VideoMode::getDesktopMode();
 }
 
-void Game::initEnemies() {
-  this->enemy.setSize(sf::Vector2f(50.f, 50.f));
-  this->enemy.setFillColor(sf::Color::Red);
-  this->enemy.setPosition(sf::Vector2f(static_cast<float>(rand() % static_cast<int>(this->window->getSize().y)), 0.f));
+void Game::game_text() {
+  if(!this->font.loadFromFile("operius-mono.ttf")) {
+    std::cerr << "Error: Could not load font 'arial.ttf'" << std::endl;
+    this->text.setString("****");
+  }
+  this->text.setFont(this->font);
+  this->text.setFillColor(sf::Color::White);
+  this->text.setString("Pause");
+  this->text.setCharacterSize(50);
 
+  sf::FloatRect textRect = this->text.getLocalBounds();
+  this->text.setOrigin(textRect.width/2,textRect.height/2);
+  this->text.setPosition((this->videoMode.width)/2.0f, (this->videoMode.height)/2.0f);
 }
 
 Game::Game() {
   this->initVariable();
   this->initWindow();
-  // this->initEnemies();
+  this->game_text();
 }
 
-Game::~Game() {
+Game::~Game() { 
   delete this->window;
 }
 
@@ -47,6 +56,10 @@ void Game::event_polling() {
     if(this->event.type == sf::Event::Closed) {
       this->window->close();
     }
+
+    if(this->event.type == sf::Event::KeyPressed && this->event.key.code == sf::Keyboard::Escape) {
+      this->pause = !this->pause;
+    }
   }
 }
 
@@ -55,7 +68,6 @@ void Game::update_mouse_position() {
 }
 
 void Game::enemies_update() {
-
   if(this->enemy_timer >= this->enemy_timer_max) {
     this->spawn_enemies();
     this->enemy_timer = 0.f;
@@ -95,6 +107,10 @@ void Game::game_update() {
 
 void Game::game_render() {
   this->window->clear();
-  this->render_enemies();
+  if(!this->pause) {
+    this->render_enemies();
+  } else {
+    this->window->draw(this->text);
+  }
   this->window->display();
 }

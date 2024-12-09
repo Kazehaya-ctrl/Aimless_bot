@@ -14,16 +14,20 @@ private:
   sf::RenderWindow* window;
   sf::Event event;
   sf::VideoMode videoMode;
+  sf::VideoMode deskTop;
   sf::RectangleShape enemy;
   std::vector<sf::RectangleShape> enemies;
   sf::Vector2i mouse_position;
+  sf::Text text;
+  sf::Font font;
 
+  bool pause;
   float enemy_timer;
   float enemy_timer_max;
 
   void initVariable();
   void initWindow();
-  void initEnemies();
+  void game_text();
 
 public:
   Game();
