@@ -19,11 +19,14 @@ private:
   std::vector<sf::RectangleShape> enemies;
   sf::Vector2i mouse_position;
   sf::Text text;
+  sf::Text pl_pt;
   sf::Font font;
+  std::vector<sf::Color> colors;
 
   bool pause;
   float enemy_timer;
   float enemy_timer_max;
+  int points;
 
   void initVariable();
   void initWindow();
@@ -34,6 +37,7 @@ public:
   virtual ~Game();
 
   void spawn_enemies();
+  void spawn_enemies_random(float position_y);
   void update_mouse_position();
   bool is_running();
   void event_polling();

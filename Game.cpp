@@ -5,6 +5,8 @@ void Game::initVariable() {
   this->enemy_timer = 100.f;
   this->enemy_timer_max = 100.f;
   this->pause = false;
+  this->points = 0;
+  this->colors = {sf::Color::Cyan, sf::Color::Yellow, sf::Color::Blue, sf::Color::Green};
 }
 
 void Game::initWindow() {
@@ -28,6 +30,12 @@ void Game::game_text() {
   sf::FloatRect textRect = this->text.getLocalBounds();
   this->text.setOrigin(textRect.width/2,textRect.height/2);
   this->text.setPosition((this->videoMode.width)/2.0f, (this->videoMode.height)/2.0f);
+
+  this->pl_pt.setFont(this->font);
+  this->pl_pt.setFillColor(sf::Color::White);
+  this->pl_pt.setString("Points: " + std::to_string(this->points));
+  this->pl_pt.setPosition(10.f, 10.f);
+  this->pl_pt.setCharacterSize(20);
 }
 
 Game::Game() {
@@ -47,7 +55,15 @@ bool Game::is_running() {
 void Game::spawn_enemies() {
   this->enemy.setFillColor(sf::Color::Red);
   this->enemy.setSize(sf::Vector2f(50.f, 50.f));
-  this->enemy.setPosition(static_cast<float>(rand() % static_cast<int>(this->window->getSize().x)), 0.f);
+  this->enemy.setPosition(static_cast<float>(rand() % static_cast<int>((this->window->getSize().x) - this->enemy.getSize().x)), 0.f);
+  this->enemies.push_back(this->enemy);
+}
+
+void Game::spawn_enemies_random(float position_y) {
+
+  this->enemy.setFillColor(this->colors[rand() % (this->colors.size())]);
+  this->enemy.setSize(sf::Vector2f(50.f, 50.f));
+  this->enemy.setPosition(static_cast<float>(rand() % static_cast<int>((this->window->getSize().x) - this->enemy.getSize(). x)), position_y);
   this->enemies.push_back(this->enemy);
 }
 
@@ -72,7 +88,7 @@ void Game::enemies_update() {
     this->spawn_enemies();
     this->enemy_timer = 0.f;
   } else {
-    this->enemy_timer += 7.f;
+    this->enemy_timer += 3.f;
   }
 
   for(auto i = this->enemies.begin(); i != (this->enemies.end());) {
@@ -81,13 +97,21 @@ void Game::enemies_update() {
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
       if(i->getGlobalBounds().contains(static_cast<float>(this->mouse_position.x), static_cast<float>(this->mouse_position.y))) {
         this->enemies.erase(i);
+        this->points++;
+        this->pl_pt.setString("Points: " + std::to_string(this->points));
       } else {
         ++i;
-      }
-    } else if(this->enemy.getPosition().y > this->window->getSize().y) {
-      this->enemies.erase(i);
+      } 
+    } else if (i->getGlobalBounds().contains(static_cast<float>(this->mouse_position.x), static_cast<float>(this->mouse_position.y))) {
+        this->enemies.erase(i);
+        this->spawn_enemies_random(this->mouse_position.y);
+    }
+      else if(i->getPosition().y > this->window->getSize().y) {
+        this->enemies.erase(i);
+        this->points--;
+        this->pl_pt.setString("Points: " + std::to_string(this->points));
     } else {
-      ++i;
+        ++i;
     }
   }
 
@@ -112,5 +136,6 @@ void Game::game_render() {
   } else {
     this->window->draw(this->text);
   }
+  this->window->draw(this->pl_pt);
   this->window->display();
 }
